@@ -1,104 +1,52 @@
 import Option._
 
-sealed trait Option[+A] {
-  self =>
+object Option {
+
+  def apply[A](value: A): Option[A] = ???
+
+  def empty: Option[Nothing] = ???
+
+}
+
+trait Option[A] { self =>
 
   def isEmpty: Boolean
 
-  def isDefined: Boolean = !isEmpty
+  def isDefined: Boolean
   
-  def nonEmpty: Boolean = isDefined
+  def nonEmpty: Boolean
 
-  def getOrElse[A1 >: A](orElse: A1): A1 =
-    self match {
-      case Some(value) => value
-      case None        => orElse
-    }
+  def getOrElse(orElse: A): A
 
-  def map[B](f: A => B): Option[B] = self match {
-    case Some(value) => Some(f(value))
-    case None        => None
-  }
+  def map[B](f: A => B): Option[B]
 
-  def flatMap[B](f: A => Option[B]): Option[B] = self match {
-    case Some(value) => f(value)
-    case None        => None
-  }
+  def flatMap[B](f: A => Option[B]): Option[B]
 
-  def fold[B](ifEmpty: B)(f: A => B) = self match {
-    case Some(value) => f(value)
-    case None        => ifEmpty
-  }
+  def flatten[B]: Option[B]
 
-  def filter(pred: A => Boolean): Option[A] = self match {
-    case Some(value) if pred(value) => Some(value)
-    case _                          => None
-  }
+  def fold[B](ifEmpty: B)(f: A => B)
 
-  def filterNot(pred: A => Boolean): Option[A] = self match {
-    case Some(value) if !pred(value) => Some(value)
-    case _                           => None
-  }
+  def filter(pred: A => Boolean): Option[A]
 
-  def exists(pred: A => Boolean): Boolean = self match {
-    case Some(value) => pred(value)
-    case None        => false
-  }
+  def filterNot(pred: A => Boolean): Option[A]
 
-  def contains[A1 >: A](value: A1): Boolean = exists(_ == value)
+  def exists(pred: A => Boolean): Boolean
 
-  def forall(pred: A => Boolean): Boolean = exists(pred)
+  def contains(value: A): Boolean
 
-  def foreach[U](f: A => U): Unit = self match {
-    case Some(value) => f(value)
-    case None        => ()
-  }
+  def forall(pred: A => Boolean): Boolean
 
-  def collect[B](pf: PartialFunction[A, B]): Option[B] = self match {
-    case Some(value) => pf.lift(value) match {
-      case scala.Some(value) => Some(value)
-      case scala.None        => None
-    }
-    case None        => None
-  }
+  def foreach[U](f: A => U): Unit
 
-  final def orElse[B >: A](alt: Option[B]): Option[B] = self match {
-    case Some(value) => Some(value)
-    case None        => alt
-  }
+  def collect[B](pf: PartialFunction[A, B]): Option[B]
 
-  final def orNull[A1 >: A](implicit ev: Null <:< A1): A1 = getOrElse(ev(null))
+  def orElse[B >: A](alt: Option[B]): Option[B]
 
-  final def toList: List[A] = self match {
-    case Some(value) => List(value)
-    case None        => Nil // List()
-  }
+  def orNull
 
-  final def toLeft[B](right: => B): Either[A, B] = self match {
-    case Some(value) => Left(value)
-    case None        => Right(right)
-  }
+  def toList: List[A]
 
-  final def toRight[B](left: => B): Either[B, A] = self match {
-    case Some(value) => Right(value)
-    case None        => Left(left)
-  }
-}
+  def toLeft[B](right: => B): Either[A, B]
 
-object Option {
-
-  def apply[A](value: A): Option[A] =
-    if(value == null) None else Some(value)
-
-  def empty: Option[Nothing] = None
-
-  final case class Some[A](value: A) extends Option[A] {
-
-    def isEmpty: Boolean = false
-  }
-
-  final case object None extends Option[Nothing] {
-
-    def isEmpty: Boolean = true
-  }
+  def toRight[B](left: => B): Either[B, A]
 }
