@@ -42,7 +42,7 @@ trait Option[A] { self =>
 
   def orElse[B >: A](alt: Option[B]): Option[B]
 
-  def orNull
+  def orNull: A
 
   def toList: List[A]
 
