@@ -16,9 +16,12 @@ sealed trait List[+A] { self =>
   def tail: List[A]
 
   def ::[A1 >: A](value: A1): List[A1] =
-    value :: self
+    List.::(value, self)
 
-  def :::[A1 >: A](that: List[A1]): List[A1] = that
+  def :::[A1 >: A](that: List[A1]): List[A1] = that match {
+    case Nil => self
+    case x :: xs => x :: (xs ::: self)
+  }
 
   // append a list
   def ++[A1 >: A](that: List[A1]): List[A1] = self match {
@@ -176,7 +179,9 @@ sealed trait List[+A] { self =>
 
 object List {
 
-  def apply[A](xs: A*): List[A] = xs.foldLeft(Nil: List[A])((b, a) => a :: b)
+  def apply[T](elements: T*): List[T] =
+    if(elements.isEmpty) Nil
+    else ::(elements.head, apply(elements.tail: _*))
 
   def concat[A](xss: List[A]*): List[A] = ???
 
