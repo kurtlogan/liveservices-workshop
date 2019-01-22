@@ -80,20 +80,20 @@ object OptionAnswers {
 
     final def orNull[A1 >: A](implicit ev: Null <:< A1): A1 = getOrElse(ev(null))
 
-    final def toList: List[A] = self match {
-      case Some(value) => List(value)
-      case None        => Nil
-    }
+//    final def toList: List[A] = self match {
+//      case Some(value) => List(value)
+//      case None        => Nil
+//    }
 
-    final def toLeft[B](right: => B): Either[A, B] = self match {
-      case Some(value) => Left(value)
-      case None        => Right(right)
-    }
-
-    final def toRight[B](left: => B): Either[B, A] = self match {
-      case Some(value) => Right(value)
-      case None        => Left(left)
-    }
+//    final def toLeft[B](right: => B): Either[A, B] = self match {
+//      case Some(value) => Left(value)
+//      case None        => Right(right)
+//    }
+//
+//    final def toRight[B](left: => B): Either[B, A] = self match {
+//      case Some(value) => Right(value)
+//      case None        => Left(left)
+//    }
   }
 
   object Option {

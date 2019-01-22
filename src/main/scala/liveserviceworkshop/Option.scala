@@ -93,10 +93,10 @@ sealed trait Option[+A] { self =>
     case None        => List()
   }
 
-  def toLeft[B](right: => B): Either[A, B] = self match {
-    case Some(value) => Left(value)
-    case None        => Right(right)
-  }
+//  def toLeft[B](right: => B): Either[A, B] = self match {
+//    case Some(value) => Left(value)
+//    case None        => Right(right)
+//  }
 
 
 //  def toRight[B](left: => B): Either[B, A] = self match {
