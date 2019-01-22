@@ -2,16 +2,13 @@ package liveserviceworkshop
 
 import org.scalatest.{MustMatchers, WordSpec}
 
+
 class ListTests extends WordSpec with MustMatchers {
 
-  val list1 = 1 :: 2 :: 3 :: Nil
-  val list2 = 4 :: 5 :: 6 :: Nil
+  import liveserviceworkshop.List._
 
-  ":::" should {
-    "prepend list" in {
+  val list1 = List(1, 2, 3)
+  val list2 = List(4, 5, 6)
 
-      List(1, 2, 3) ::: List(4, 5, 6)
-      list1 ++ list2 mustBe 1 :: 2 :: 3 :: 4 :: 5 :: 6 :: Nil
-    }
-  }
+
 }

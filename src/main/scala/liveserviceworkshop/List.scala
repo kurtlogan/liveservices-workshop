@@ -1,4 +1,4 @@
-package liveserviceworkshop.real
+package liveserviceworkshop
 
 import scala.collection.immutable.Stream
 import List._
@@ -109,7 +109,6 @@ sealed trait List[+A] { self =>
 
 object List {
 
-  // Skip
   def apply[A](xs: A*): List[A] = ???
 
   def unapplySeq[A](xs: List[A]): Option[List[A]] = ???
