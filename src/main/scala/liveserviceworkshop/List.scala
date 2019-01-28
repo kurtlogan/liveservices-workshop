@@ -3,7 +3,10 @@ package liveserviceworkshop
 import scala.collection.immutable.Stream
 import List._
 
+import scala.annotation.tailrec
 import scala.math.Ordering
+
+// git@github.com:kurtlogan/liveservices-workshop
 
 // Hierarchy
 // https://docs.scala-lang.org/resources/images/tour/collections-immutable-diagram.svg
@@ -14,37 +17,77 @@ sealed trait List[+A] { self =>
 
   def head: A
 
-  def headOption: Option[A] = ???
-
   def tail: List[A]
 
-  def last: A = ???
+  def headOption: Option[A] = self match {
+    case List() => None
+    case x :: _ => Some(x)
+  }
 
-  def lastOption: Option[A] = ???
+  @tailrec
+  final def last: A = self match {
+    case Nil      => throw new Exception("Last on Nil")
+    case x :: Nil => x
+    case x :: xs  => xs.last
+  }
 
-  def init: List[A] = ???
+  @tailrec
+  final def lastOption: Option[A] = self match {
+    case Nil => None
+    case x :: Nil => Some(x)
+    case x :: xs  => xs.lastOption
+  }
+
+  def init: List[A] = self.take(self.length - 1)
 
   // prepend to start of list
-  def ::[A1 >: A](value: A1): List[A1] = ???
+  def ::[A1 >: A](value: A1): List[A1] =
+    List.::(value, self)
 
   // prepend to list
-  def :::[B >: A](prefix: List[B]): List[B] = ???
+  def :::[B >: A](that: List[B]): List[B] = self match {
+    case Nil     => that
+    case x :: xs => x :: (that ::: xs)
+  }
 
   // append a list
-  def ++[A1 >: A](that: List[A1]): List[A1] = ???
+  def ++[A1 >: A](that: List[A1]): List[A1] = self match {
+    case Nil     => that
+    case x :: xs => x :: (xs ++ that)
+  }
 
   // prepend a list
-  def ++:[A1 >: A](that: List[A1]): List[A1] = ???
+  def ++:[A1 >: A](that: List[A1]): List[A1] = that ::: self
 
   // prepend to list
-  def +:[A1 >: A](elem: A1): List[A1] = ???
+  def +:[A1 >: A](elem: A1): List[A1] = elem :: self
 
   // append to list
-  def :+[A1 >: A](elem: A1): List[A1] = ???
+  def :+[A1 >: A](elem: A1): List[A1] = self ++ List(elem)
 
-  def take(n: Int): List[A] = ???
+  def take(n: Int): List[A] = {
+    @tailrec
+    def loop(xs: List[A], curr: Int, acc: List[A]): List[A] = xs match {
+      case Nil => acc
+      case y :: ys =>
+        if (curr <= 0) acc
+        else loop(ys, curr - 1, acc :+ y)
+    }
 
-  def drop(n: Int): List[A] = ???
+    loop(self, n, Nil)
+  }
+
+  def drop(n: Int): List[A] = {
+    @tailrec
+    def loop(curr: Int, dec: List[A]): List[A] = dec match {
+      case Nil => dec
+      case _ :: xs =>
+        if (curr <= 0) dec
+        else loop(curr - 1, xs)
+    }
+
+    loop(n, self)
+  }
 
   def slice(from: Int, until: Int): List[A] = ???
 
@@ -105,13 +148,17 @@ sealed trait List[+A] { self =>
   def unzip[B, C](implicit ev: A <:< List[(B, C)]): (List[B], List[C]) = ???
 
   def zip[B](that: List[B]): List[(A, B)] = ???
+
+  def zipWithIndex: List[(Int, A)] = ???
 }
 
 object List {
 
-  def apply[A](xs: A*): List[A] = ???
+  def apply[A](xs: A*): List[A] =
+    if(xs.isEmpty) Nil
+    else ::(xs.head, apply(xs.tail: _*))
 
-  def unapplySeq[A](xs: List[A]): Option[List[A]] = ???
+  def unapplySeq[A](xs: List[A]): Option[List[A]] = Some(xs)
 
   def concat[A](xss: List[A]*): List[A] = ???
 
@@ -124,4 +171,16 @@ object List {
   def range[T: Integral](start: T, end: T): List[T] = ???
 
   def range[T: Integral](start: T, end: T, step: T): List[T] = ???
+
+  final case class ::[A](head: A, tail: List[A]) extends List[A] {
+    override def isEmpty: Boolean = false
+  }
+
+  final object Nil extends List[Nothing] {
+    override def isEmpty: Boolean = true
+
+    override def head: Nothing = throw new Exception("head on Nil")
+
+    override def tail: List[Nothing] = throw new Exception("tail on Nil")
+  }
 }
