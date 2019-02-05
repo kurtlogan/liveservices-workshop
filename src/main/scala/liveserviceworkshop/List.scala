@@ -89,19 +89,35 @@ sealed trait List[+A] { self =>
     loop(n, self)
   }
 
-  def slice(from: Int, until: Int): List[A] = ???
+  def slice(from: Int, until: Int): List[A] =
+    drop(from).take(until - (from - 1))
 
-  def takeRight(n: Int): List[A] = ???
+  def takeRight(n: Int): List[A] =
+    reverse.take(n).reverse
 
-  def dropRight(n: Int): List[A] = ???
+  def dropRight(n: Int): List[A] =
+    reverse.drop(n).reverse
 
-  def splitAt(n: Int): (List[A], List[A]) = ???
+  def splitAt(n: Int): (List[A], List[A]) =
+    (take(n), drop(n))
 
-  def map[B](f: A => B): List[B] = ???
+  def map[B](f: A => B): List[B] = self match {
+    case Nil     => Nil
+    case x :: xs => f(x) :: xs.map(f)
+  }
 
-  def collect[B](pf: PartialFunction[A, B]): List[B] = ???
+  def flatMap[B](f: A => List[B]): List[B] = self match {
+    case Nil     => Nil
+    case x :: xs => f(x) ++ xs.flatMap(f)
+  }
 
-  def flatMap[B](f: A => List[B]): List[B] = ???
+  def collect[B](pf: PartialFunction[A, B]): List[B] = self match {
+    case Nil => Nil
+    case x :: xs => pf.lift(x) match {
+      case None => xs.collect(pf)
+      case Some(y) => y :: xs.collect(pf)
+    }
+  }
 
   def takeWhile(p: A => Boolean): List[A] = ???
 
@@ -109,7 +125,10 @@ sealed trait List[+A] { self =>
 
   def span(p: A => Boolean): (List[A], List[A]) = ???
 
-  def reverse: List[A] = ???
+  def reverse: List[A] = self match {
+    case Nil     => Nil
+    case x :: xs => xs.reverse ++ (x :: Nil)
+  }
 
   def fold[A1 >: A](z: A1)(op: (A1, A1) => A1): A1 = ???
 
