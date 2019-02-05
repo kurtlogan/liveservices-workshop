@@ -119,34 +119,20 @@ sealed trait List[+A] { self =>
     }
   }
 
-  def takeWhile(p: A => Boolean): List[A] = ???
-
-  def dropWhile(p: A => Boolean): List[A] = ???
-
-  def span(p: A => Boolean): (List[A], List[A]) = ???
-
   def reverse: List[A] = self match {
     case Nil     => Nil
     case x :: xs => xs.reverse ++ (x :: Nil)
   }
 
-  def fold[A1 >: A](z: A1)(op: (A1, A1) => A1): A1 = ???
-
   def foldLeft[B](z: B)(op: (B, A) => B): B = ???
 
   def foldRight[B](z: B)(op: (A, B) => B): B = ???
 
+  def fold[A1 >: A](z: A1)(op: (A1, A1) => A1): A1 = ???
+
   def filter(p: A => Boolean): List[A] = ???
 
   def find(p: A => Boolean): Option[A] = ???
-
-  def partition(p: A => Boolean): (List[A], List[A]) = ???
-
-  def toStream : Stream[A] = ???
-
-  def length: Int = ???
-
-  def flatten: List[A] = ???
 
   def mkString: String = ???
 
@@ -158,6 +144,16 @@ sealed trait List[+A] { self =>
 
   def contains[A1 >: A](a: A1): Boolean = ???
 
+  def zip[B](that: List[B]): List[(A, B)] = ???
+
+  // END
+
+  def takeWhile(p: A => Boolean): List[A] = ???
+
+  def dropWhile(p: A => Boolean): List[A] = ???
+
+  def span(p: A => Boolean): (List[A], List[A]) = ???
+
   def sorted[A1 >: A](implicit ord: Ordering[A1]): List[A1] = ???
 
   def sortBy[B](f: A => B)(implicit ord: Ordering[B]): List[A] = ???
@@ -166,9 +162,15 @@ sealed trait List[+A] { self =>
 
   def unzip[B, C](implicit ev: A <:< List[(B, C)]): (List[B], List[C]) = ???
 
-  def zip[B](that: List[B]): List[(A, B)] = ???
-
   def zipWithIndex: List[(Int, A)] = ???
+
+  def partition(p: A => Boolean): (List[A], List[A]) = ???
+
+  def toStream : Stream[A] = ???
+
+  def length: Int = ???
+
+  def flatten: List[A] = ???
 }
 
 object List {
